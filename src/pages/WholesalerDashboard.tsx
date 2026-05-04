@@ -1,6 +1,6 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, Bell, PackageCheck, AlertTriangle, Clock, CheckCircle } from 'lucide-react';
+import { AlertTriangle, Bell, Check, CheckCircle, Clock, PackageCheck, Star, Truck, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useOrders } from '../context/OrderContext';
 
@@ -9,6 +9,16 @@ const WholesalerDashboard = () => {
   const { orders, updateOrderStatus } = useOrders();
 
   const pendingOrders = orders.filter(o => o.status === 'pending');
+  const acceptedOrders = orders.filter(o => o.status === 'accepted');
+  const dispatchedOrders = orders.filter(o => o.status === 'dispatched');
+  const disputedOrders = orders.filter(o => o.status === 'disputed');
+  const deliveredCount = orders.filter(o => o.status === 'delivered' || o.status === 'resolved').length;
+  const resolvedDisputes = orders.filter(o => o.status === 'resolved').length;
+  const totalDisputes = disputedOrders.length + resolvedDisputes;
+  const disputeRate = orders.length === 0 ? 0 : (totalDisputes / orders.length) * 100;
+  const onTimeRate = orders.length === 0 ? 0 : (dispatchedOrders.length + deliveredCount) / orders.length * 100;
+  const accuracyRate = Math.max(88, 100 - disputeRate * 2.2);
+  const trustScore = Math.max(3.2, Math.min(5, 2 + (accuracyRate * 0.45 + onTimeRate * 0.35 + (100 - disputeRate * 4) * 0.2) / 100 * 3));
 
   const handleAction = (id: string, action: 'accept' | 'decline') => {
     updateOrderStatus(id, action === 'accept' ? 'accepted' : 'declined');
@@ -41,7 +51,7 @@ const WholesalerDashboard = () => {
             </h2>
             
             <div className="text-center mb-8 pb-8 border-b border-luxury-dark/10">
-              <div className="text-5xl font-serif text-luxury-gold mb-2">4.7</div>
+              <div className="text-5xl font-serif text-luxury-gold mb-2">{trustScore.toFixed(1)}</div>
               <div className="text-xs uppercase tracking-widest text-luxury-dark/60 font-medium">{t('overallScore')}</div>
             </div>
 
@@ -49,31 +59,42 @@ const WholesalerDashboard = () => {
               <div>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-luxury-dark/70">{t('accuracyRate')}</span>
-                  <span className="font-semibold text-emerald-600">96.2%</span>
+                  <span className="font-semibold text-emerald-600">{accuracyRate.toFixed(1)}%</span>
                 </div>
                 <div className="h-1.5 w-full bg-luxury-dark/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-emerald-400 w-[96.2%]" />
+                  <div className="h-full bg-emerald-400" style={{ width: `${accuracyRate}%` }} />
                 </div>
               </div>
               
               <div>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-luxury-dark/70">{t('onTimeRate')}</span>
-                  <span className="font-semibold text-emerald-600">91.0%</span>
+                  <span className="font-semibold text-emerald-600">{onTimeRate.toFixed(1)}%</span>
                 </div>
                 <div className="h-1.5 w-full bg-luxury-dark/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-emerald-400 w-[91%]" />
+                  <div className="h-full bg-emerald-400" style={{ width: `${onTimeRate}%` }} />
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-luxury-dark/70">{t('disputeRateLabel')}</span>
-                  <span className="font-semibold text-rose-500">3.1%</span>
+                  <span className="font-semibold text-rose-500">{disputeRate.toFixed(1)}%</span>
                 </div>
                 <div className="h-1.5 w-full bg-luxury-dark/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-rose-400 w-[3.1%]" />
+                  <div className="h-full bg-rose-400" style={{ width: `${Math.min(disputeRate, 100)}%` }} />
                 </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 mt-6 text-xs">
+              <div className="bg-white/60 rounded-lg border border-luxury-dark/10 px-3 py-2">
+                <p className="text-luxury-dark/50 uppercase tracking-wide">Fulfilled</p>
+                <p className="font-semibold text-luxury-dark mt-0.5">{deliveredCount}</p>
+              </div>
+              <div className="bg-white/60 rounded-lg border border-luxury-dark/10 px-3 py-2">
+                <p className="text-luxury-dark/50 uppercase tracking-wide">Open Disputes</p>
+                <p className="font-semibold text-rose-600 mt-0.5">{disputedOrders.length}</p>
               </div>
             </div>
             
@@ -161,6 +182,79 @@ const WholesalerDashboard = () => {
                   ))
                 )}
               </AnimatePresence>
+            </div>
+          </div>
+
+          <div className="glass rounded-3xl overflow-hidden bg-white/60 mt-6">
+            <div className="p-6 border-b border-luxury-dark/10 flex justify-between items-center bg-white/40">
+              <h2 className="text-xl font-serif font-medium text-luxury-dark flex items-center gap-2">
+                <Truck size={20} className="text-amber-600" />
+                Dispatch Control
+              </h2>
+              <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs rounded-full">{acceptedOrders.length + dispatchedOrders.length} active</span>
+            </div>
+            <div className="p-6 space-y-3">
+              {[...acceptedOrders, ...dispatchedOrders].length === 0 && (
+                <p className="text-sm text-luxury-dark/50">No accepted orders waiting for dispatch.</p>
+              )}
+              {[...acceptedOrders, ...dispatchedOrders].map((order) => (
+                <div key={order.id} className="border border-luxury-dark/10 rounded-xl p-4 bg-white">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div>
+                      <p className="font-semibold text-luxury-dark">{order.id} - {order.retailer}</p>
+                      <p className="text-sm text-luxury-dark/70">{order.items}</p>
+                    </div>
+                    {order.status === 'accepted' ? (
+                      <button
+                        onClick={() => updateOrderStatus(order.id, 'dispatched')}
+                        className="px-4 py-2 rounded-full bg-luxury-dark text-white hover:bg-luxury-gold text-sm"
+                      >
+                        Mark Dispatched
+                      </button>
+                    ) : (
+                      <span className="text-xs text-amber-700 bg-amber-100 px-3 py-1 rounded-full">In Transit</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="glass rounded-3xl overflow-hidden bg-white/60 mt-6 mb-4">
+            <div className="p-6 border-b border-luxury-dark/10 flex justify-between items-center bg-white/40">
+              <h2 className="text-xl font-serif font-medium text-luxury-dark flex items-center gap-2">
+                <Star size={20} className="text-rose-500" />
+                Dispute Resolution (24h Window)
+              </h2>
+              <span className="px-3 py-1 bg-rose-100 text-rose-700 text-xs rounded-full">{disputedOrders.length} open</span>
+            </div>
+            <div className="p-6 space-y-3">
+              {disputedOrders.length === 0 && (
+                <div className="text-sm text-luxury-dark/50">No open disputes. Keep maintaining high fulfilment quality.</div>
+              )}
+              {disputedOrders.map((order) => (
+                <div key={order.id} className="border border-rose-200 rounded-xl p-4 bg-rose-50/40">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div>
+                      <p className="font-semibold text-luxury-dark">{order.id} - {order.retailer}</p>
+                      <p className="text-sm text-luxury-dark/70">{order.items}</p>
+                      {order.issueReason && (
+                        <p className="text-xs text-rose-700 mt-1">Issue: {order.issueReason}</p>
+                      )}
+                      <p className="text-[11px] text-rose-700/80 mt-1 inline-flex items-center gap-1">
+                        <Clock size={12} /> Auto-penalty if unresolved after 24h
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => updateOrderStatus(order.id, 'resolved')}
+                      className="px-4 py-2 rounded-full bg-emerald-500 text-white hover:bg-emerald-600 text-sm inline-flex items-center gap-1"
+                    >
+                      <Check size={14} />
+                      Mark Resolved
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </motion.div>
