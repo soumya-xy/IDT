@@ -136,27 +136,27 @@ const RetailerDashboard = () => {
           >
             <div className="flex items-start justify-between mb-4">
               <div>
-                <p className="text-sm uppercase tracking-wide text-luxury-dark/50">Wholesaler Trust Profile</p>
+                <p className="text-sm uppercase tracking-wide text-luxury-dark/50">{t('wholesalerTrustProfile')}</p>
                 <h3 className="text-xl font-serif text-luxury-dark mt-1">{card.name}</h3>
               </div>
               <div className="bg-luxury-dark text-white rounded-xl px-4 py-2 text-center min-w-[84px]">
                 <p className="font-serif text-2xl leading-tight">{card.score}</p>
-                <p className="text-[10px] uppercase tracking-wider opacity-70">Score</p>
+                <p className="text-[10px] uppercase tracking-wider opacity-70">{t('score')}</p>
               </div>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-              <div><p className="text-luxury-dark/50">Fulfilled</p><p className="font-semibold text-luxury-dark">{card.metrics.fulfilledOrders}+</p></div>
-              <div><p className="text-luxury-dark/50">Accuracy</p><p className="font-semibold text-emerald-600">{card.metrics.accuracy}%</p></div>
-              <div><p className="text-luxury-dark/50">On-time</p><p className="font-semibold text-emerald-600">{card.metrics.onTime}%</p></div>
-              <div><p className="text-luxury-dark/50">Disputes</p><p className="font-semibold text-rose-600">{card.metrics.disputes}%</p></div>
+              <div><p className="text-luxury-dark/50">{t('fulfilled')}</p><p className="font-semibold text-luxury-dark">{card.metrics.fulfilledOrders}+</p></div>
+              <div><p className="text-luxury-dark/50">{t('accuracyShort')}</p><p className="font-semibold text-emerald-600">{card.metrics.accuracy}%</p></div>
+              <div><p className="text-luxury-dark/50">{t('onTimeShort')}</p><p className="font-semibold text-emerald-600">{card.metrics.onTime}%</p></div>
+              <div><p className="text-luxury-dark/50">{t('disputes')}</p><p className="font-semibold text-rose-600">{card.metrics.disputes}%</p></div>
             </div>
             <div className="mt-3 flex gap-2 text-[11px]">
-              <span className="px-2 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-100">{card.openRedSignals} red signals</span>
-              <span className="px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100">{card.openOrangeSignals} orange signals</span>
+              <span className="px-2 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-100">{card.openRedSignals} {t('redSignals')}</span>
+              <span className="px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100">{card.openOrangeSignals} {t('orangeSignals')}</span>
             </div>
             <div className="mt-4 flex items-center gap-2 text-xs text-[#8B6508] bg-luxury-gold/10 border border-luxury-gold/20 rounded-lg px-3 py-2">
               <ShieldCheck size={14} />
-              Tier acceptance: {card.tierAcceptance}. Click to view live catalog.
+              {t('tierAcceptancePrefix')} {card.tierAcceptance}. {t('clickToViewLiveCatalog')}
             </div>
           </motion.div>
         ))}
@@ -182,10 +182,10 @@ const RetailerDashboard = () => {
               onChange={(e) => setStatusFilter(e.target.value as 'all' | 'green' | 'orange' | 'red')}
               className="px-4 py-2 rounded-full border border-luxury-dark/10 bg-white text-sm text-luxury-dark/70 focus:outline-none focus:border-luxury-gold/50"
             >
-              <option value="all">All signals</option>
-              <option value="green">Green</option>
-              <option value="orange">Orange</option>
-              <option value="red">Red</option>
+              <option value="all">{t('allSignals')}</option>
+              <option value="green">{t('greenSignal')}</option>
+              <option value="orange">{t('orangeSignal')}</option>
+              <option value="red">{t('redSignal')}</option>
             </select>
           </div>
         </div>
@@ -235,9 +235,9 @@ const RetailerDashboard = () => {
                       }`}
                     >
                       {getOrderStatus(product.id) === 'pending' 
-                        ? 'Pending...' 
+                        ? t('pendingStatus')
                         : getOrderStatus(product.id) === 'accepted' 
-                        ? 'Accepted' 
+                        ? t('acceptedStatus')
                         : t('orderNow')}
                     </button>
                   </td>
@@ -246,7 +246,7 @@ const RetailerDashboard = () => {
               {filteredProducts.length === 0 && (
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-luxury-dark/50 text-sm">
-                    No products match your search/filter.
+                    {t('noProductsMatch')}
                   </td>
                 </tr>
               )}
@@ -259,13 +259,13 @@ const RetailerDashboard = () => {
         <div className="p-6 border-b border-luxury-dark/10 flex items-center justify-between">
           <h2 className="text-xl font-serif text-luxury-dark flex items-center gap-2">
             <Store size={20} className="text-luxury-accent" />
-            Order Lifecycle Tracker
+            {t('orderLifecycleTracker')}
           </h2>
-          <span className="text-xs uppercase tracking-wide text-luxury-dark/50">{activeOrders.length} active orders</span>
+          <span className="text-xs uppercase tracking-wide text-luxury-dark/50">{activeOrders.length} {t('activeOrders')}</span>
         </div>
         <div className="p-6 space-y-4">
           {activeOrders.length === 0 && (
-            <p className="text-sm text-luxury-dark/50">No active orders in transit.</p>
+            <p className="text-sm text-luxury-dark/50">{t('noActiveOrders')}</p>
           )}
           {activeOrders.map((order) => (
             <div key={order.id} className="border border-luxury-dark/10 bg-white rounded-2xl p-4">
@@ -277,15 +277,15 @@ const RetailerDashboard = () => {
                   </div>
                   <p className="text-sm text-luxury-dark/80">{order.items}</p>
                   <div className="mt-2 flex flex-wrap gap-3 text-xs text-luxury-dark/50">
-                    <span className="inline-flex items-center gap-1"><Clock3 size={12} />Placed: {order.timeline.placedAt}</span>
-                    {order.timeline.acceptedAt && <span>Accepted: {order.timeline.acceptedAt}</span>}
-                    {order.timeline.dispatchedAt && <span>Dispatched: {order.timeline.dispatchedAt}</span>}
-                    {order.timeline.deliveredAt && <span>Delivered: {order.timeline.deliveredAt}</span>}
+                    <span className="inline-flex items-center gap-1"><Clock3 size={12} />{t('placedAt')}: {order.timeline.placedAt}</span>
+                    {order.timeline.acceptedAt && <span>{t('acceptedAt')}: {order.timeline.acceptedAt}</span>}
+                    {order.timeline.dispatchedAt && <span>{t('dispatchedAt')}: {order.timeline.dispatchedAt}</span>}
+                    {order.timeline.deliveredAt && <span>{t('deliveredAt')}: {order.timeline.deliveredAt}</span>}
                   </div>
                   {order.issueReason && (
                     <div className="mt-3 text-xs text-rose-700 bg-rose-50 border border-rose-100 px-3 py-2 rounded-lg inline-flex items-center gap-2">
                       <AlertTriangle size={14} />
-                      Issue: {order.issueReason}
+                      {t('issueLabel')}: {order.issueReason}
                     </div>
                   )}
                 </div>
@@ -295,7 +295,7 @@ const RetailerDashboard = () => {
                       onClick={() => updateOrderStatus(order.id, 'delivered')}
                       className="px-4 py-2 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium"
                     >
-                      Confirm Receipt
+                      {t('confirmReceipt')}
                     </button>
                   )}
                   {(order.status === 'dispatched' || order.status === 'delivered') && (
@@ -303,27 +303,27 @@ const RetailerDashboard = () => {
                       onClick={() => setActiveIssueOrderId(activeIssueOrderId === order.id ? null : order.id)}
                       className="px-4 py-2 rounded-full border border-rose-200 text-rose-600 hover:bg-rose-50 text-sm font-medium"
                     >
-                      Report Issue
+                      {t('reportIssue')}
                     </button>
                   )}
                 </div>
               </div>
               {activeIssueOrderId === order.id && (
                 <div className="mt-4 pt-4 border-t border-luxury-dark/10">
-                  <label className="text-xs text-luxury-dark/60 block mb-2">Describe the problem (quantity mismatch, damage, wrong SKU):</label>
+                  <label className="text-xs text-luxury-dark/60 block mb-2">{t('describeProblemLabel')}</label>
                   <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       type="text"
                       value={issueReason}
                       onChange={(e) => setIssueReason(e.target.value)}
                       className="flex-1 px-3 py-2 text-sm rounded-lg border border-luxury-dark/10 focus:outline-none focus:border-luxury-gold/40"
-                      placeholder="e.g. 12 packs missing from total quantity"
+                      placeholder={t('issuePlaceholder')}
                     />
                     <button
                       onClick={() => handleReportIssue(order.id)}
                       className="px-4 py-2 rounded-lg bg-luxury-dark text-white text-sm hover:bg-luxury-gold"
                     >
-                      Submit Dispute
+                      {t('submitDispute')}
                     </button>
                   </div>
                 </div>

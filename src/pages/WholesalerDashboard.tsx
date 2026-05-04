@@ -89,11 +89,11 @@ const WholesalerDashboard = () => {
 
             <div className="grid grid-cols-2 gap-3 mt-6 text-xs">
               <div className="bg-white/60 rounded-lg border border-luxury-dark/10 px-3 py-2">
-                <p className="text-luxury-dark/50 uppercase tracking-wide">Fulfilled</p>
+                <p className="text-luxury-dark/50 uppercase tracking-wide">{t('fulfilled')}</p>
                 <p className="font-semibold text-luxury-dark mt-0.5">{deliveredCount}</p>
               </div>
               <div className="bg-white/60 rounded-lg border border-luxury-dark/10 px-3 py-2">
-                <p className="text-luxury-dark/50 uppercase tracking-wide">Open Disputes</p>
+                <p className="text-luxury-dark/50 uppercase tracking-wide">{t('openDisputes')}</p>
                 <p className="font-semibold text-rose-600 mt-0.5">{disputedOrders.length}</p>
               </div>
             </div>
@@ -189,13 +189,13 @@ const WholesalerDashboard = () => {
             <div className="p-6 border-b border-luxury-dark/10 flex justify-between items-center bg-white/40">
               <h2 className="text-xl font-serif font-medium text-luxury-dark flex items-center gap-2">
                 <Truck size={20} className="text-amber-600" />
-                Dispatch Control
+                {t('dispatchControl')}
               </h2>
-              <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs rounded-full">{acceptedOrders.length + dispatchedOrders.length} active</span>
+              <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs rounded-full">{acceptedOrders.length + dispatchedOrders.length} {t('active')}</span>
             </div>
             <div className="p-6 space-y-3">
               {[...acceptedOrders, ...dispatchedOrders].length === 0 && (
-                <p className="text-sm text-luxury-dark/50">No accepted orders waiting for dispatch.</p>
+                <p className="text-sm text-luxury-dark/50">{t('noAcceptedOrders')}</p>
               )}
               {[...acceptedOrders, ...dispatchedOrders].map((order) => (
                 <div key={order.id} className="border border-luxury-dark/10 rounded-xl p-4 bg-white">
@@ -209,10 +209,10 @@ const WholesalerDashboard = () => {
                         onClick={() => updateOrderStatus(order.id, 'dispatched')}
                         className="px-4 py-2 rounded-full bg-luxury-dark text-white hover:bg-luxury-gold text-sm"
                       >
-                        Mark Dispatched
+                        {t('markDispatched')}
                       </button>
                     ) : (
-                      <span className="text-xs text-amber-700 bg-amber-100 px-3 py-1 rounded-full">In Transit</span>
+                      <span className="text-xs text-amber-700 bg-amber-100 px-3 py-1 rounded-full">{t('inTransit')}</span>
                     )}
                   </div>
                 </div>
@@ -224,13 +224,13 @@ const WholesalerDashboard = () => {
             <div className="p-6 border-b border-luxury-dark/10 flex justify-between items-center bg-white/40">
               <h2 className="text-xl font-serif font-medium text-luxury-dark flex items-center gap-2">
                 <Star size={20} className="text-rose-500" />
-                Dispute Resolution (24h Window)
+                {t('disputeResolutionWindow')}
               </h2>
-              <span className="px-3 py-1 bg-rose-100 text-rose-700 text-xs rounded-full">{disputedOrders.length} open</span>
+              <span className="px-3 py-1 bg-rose-100 text-rose-700 text-xs rounded-full">{disputedOrders.length} {t('open')}</span>
             </div>
             <div className="p-6 space-y-3">
               {disputedOrders.length === 0 && (
-                <div className="text-sm text-luxury-dark/50">No open disputes. Keep maintaining high fulfilment quality.</div>
+                <div className="text-sm text-luxury-dark/50">{t('noOpenDisputes')}</div>
               )}
               {disputedOrders.map((order) => (
                 <div key={order.id} className="border border-rose-200 rounded-xl p-4 bg-rose-50/40">
@@ -239,10 +239,10 @@ const WholesalerDashboard = () => {
                       <p className="font-semibold text-luxury-dark">{order.id} - {order.retailer}</p>
                       <p className="text-sm text-luxury-dark/70">{order.items}</p>
                       {order.issueReason && (
-                        <p className="text-xs text-rose-700 mt-1">Issue: {order.issueReason}</p>
+                        <p className="text-xs text-rose-700 mt-1">{t('issueLabel')}: {order.issueReason}</p>
                       )}
                       <p className="text-[11px] text-rose-700/80 mt-1 inline-flex items-center gap-1">
-                        <Clock size={12} /> Auto-penalty if unresolved after 24h
+                        <Clock size={12} /> {t('autoPenaltyNote')}
                       </p>
                     </div>
                     <button
@@ -250,7 +250,7 @@ const WholesalerDashboard = () => {
                       className="px-4 py-2 rounded-full bg-emerald-500 text-white hover:bg-emerald-600 text-sm inline-flex items-center gap-1"
                     >
                       <Check size={14} />
-                      Mark Resolved
+                      {t('markResolved')}
                     </button>
                   </div>
                 </div>
